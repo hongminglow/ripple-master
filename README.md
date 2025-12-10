@@ -45,6 +45,7 @@ Key differences:
 - `track` creates reactive state; use `@state` to read/update it without setters.
 - `effect` runs whenever tracked values inside it change (no dependency arrays).
 - Components are declared with `component` and render directly—no `return` wrapper needed.
+- Props are plain params; slots/children are passed as callable values instead of `props.children`.
 
 ## More Ripple syntax at a glance
 
@@ -57,6 +58,43 @@ Key differences:
 - **Class handling**: `class` works (no `className`); you can interpolate strings/expressions inline.
 - **Lists**: map arrays with JSX; keys are `key=` attribute (no `key` prop warning ceremony).
 - **No useEffect/useState/useMemo**: tracking and effects replace most React hooks; lifecycle is largely implicit through data flow.
+
+## Components vs React
+
+- Ripple uses `component` instead of `function` and does not require an explicit `return`; JSX is written directly after declarations.
+- Props are positional/destructured parameters (no `props` object unless you want one).
+- Slots/children are passed as callable values (`<FormFooter Title={FormHeader}>...`) instead of `props.children`.
+
+## Collections: arrays and sets
+
+Ripple tracks arrays and sets; reassign to trigger updates:
+
+```jsx
+let items = track(['Alpha', 'Beta']);
+let tags = track(new Set(['Ready']));
+
+const addItem = () => {
+        @items = [...@items, `Item ${@items.length + 1}`];
+};
+
+const addTag = () => {
+        @tags = new Set([...@tags, `Tag ${@tags.size + 1}`]);
+};
+```
+
+Then render with familiar JSX:
+
+```jsx
+{@items.map((item, idx) => <li key={`item-${idx}`}>{item}</li>)}
+{Array.from(@tags).map((tag) => <li key={tag}>{tag}</li>)}
+```
+
+## Live demo in this repo
+
+- Counter with `track` and `effect` updates `document.title`.
+- Derived value shows a memo-like function (`doubled()`) without `useMemo`.
+- Collections panel shows tracked array/set updates.
+- Public API fetch panel demonstrates loading/success/error state handling with tracked state.
 
 ## Getting Started
 

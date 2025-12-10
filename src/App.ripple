@@ -6,14 +6,56 @@ component FormHeader() {
 	<h1>{'Card Title'}</h1>
 }
 
+component Description() {
+	<p class="edit-hint">
+		{'Edit '}
+		<code>{'src/App.ripple'}</code>
+		{' to get started.'}
+	</p>
+}
+
 export component App() {
 	let count = track(0);
+	let items = track(['Alpha', 'Beta']);
+	let tags = track(new Set(['Ready']));
+	let status = track('idle');
+	let post = track(null);
+	let error = track('');
 
 	effect(() => {
 		document.title = `Ripple Count: ${@count}`;
 	});
 
+	effect(() => {
+		fetchPost();
+	});
+
 	const doubled = () => @count * 2;
+
+	const addItem = () => {
+		@items = [...@items, `Item ${@items.length + 1}`];
+	};
+
+	const addTag = () => {
+		@tags = new Set([...@tags, `Tag ${@tags.size + 1}`]);
+	};
+
+	const fetchPost = async () => {
+		@status = 'loading';
+		@error = '';
+		try {
+			const res = await fetch('https://jsonplaceholder.typicode.com/posts/1');
+			if (!res.ok) {
+				throw new Error('Request failed');
+			}
+			const data = await res.json();
+			@post = data;
+			@status = 'success';
+		} catch (err) {
+			@status = 'error';
+			@error = err?.message ?? 'Unknown error';
+		}
+	};
 
 	<div class="app">
 		<div class="card">
@@ -33,17 +75,55 @@ export component App() {
 				<strong>{doubled()}</strong>
 			</p>
 
+			<div class="panel">
+				<h3>{'Arrays and Sets'}</h3>
+				<p class="info-row">{'Ripple tracks collections; reassign to update UI.'}</p>
+				<div class="list-row">
+					<div>
+						<strong>{'Items'}</strong>
+						<ul>
+							for (const [idx, item] of @items.entries(); key idx) {
+								<li>{item}</li>
+							}
+						</ul>
+						<button onClick={addItem}>{'Add Item'}</button>
+					</div>
+					<div>
+						<strong>{'Tags (Set)'}</strong>
+						<ul>
+							for (const tag of @tags; key tag) {
+								<li>{tag}</li>
+							}
+						</ul>
+						<button onClick={addTag}>{'Add Tag'}</button>
+					</div>
+				</div>
+			</div>
+
+			<div class="panel">
+				<h3>{'Public API Fetch'}</h3>
+				<p class="info-row">{'Demonstrates loading/success/error state handling.'}</p>
+				<div class={`badge ${@status}`}>{@status.toUpperCase()}</div>
+				<button onClick={fetchPost} class="refresh">{'Refetch'}</button>
+				if (@status === 'loading') {
+					<p class="muted">{'Loading…'}</p>
+				}
+
+				if (@status === 'error') {
+					<p class="error-text">{@error}</p>
+				}
+
+				if (@status === 'success' && @post) {
+					<div class="post">
+						<h4>{@post.title}</h4>
+						<p>{@post.body}</p>
+					</div>
+				}
+			</div>
+
 			<SocialLink />
 
-			<FormFooter Title={FormHeader}>
-				component Description() {
-					<p class="edit-hint">
-						{'Edit '}
-						<code>{'src/App.ripple'}</code>
-						{' to get started.'}
-					</p>
-				}
-			</FormFooter>
+			<FormFooter Title={FormHeader} {Description} />
 		</div>
 	</div>
 
@@ -128,6 +208,87 @@ export component App() {
 		.info-row {
 			margin: 0.35rem 0;
 			color: #c8cbda;
+			font-size: 0.9rem;
+		}
+
+		.panel {
+			background: rgba(20, 22, 32, 0.7);
+			border: 1px solid rgba(255, 255, 255, 0.08);
+			border-radius: 0.8rem;
+			padding: 1rem;
+			margin-top: 1.25rem;
+			text-align: left;
+		}
+
+		.panel h3 {
+			margin: 0 0 0.35rem 0;
+			font-size: 1.05rem;
+		}
+
+		.list-row {
+			display: flex;
+			gap: 1rem;
+			justify-content: space-between;
+		}
+
+		.list-row ul {
+			padding-left: 1rem;
+			margin: 0.25rem 0;
+		}
+
+		.badge {
+			display: inline-block;
+			padding: 0.2rem 0.6rem;
+			border-radius: 999px;
+			font-size: 0.8rem;
+			border: 1px solid rgba(255, 255, 255, 0.12);
+			margin: 0.35rem 0;
+			text-transform: uppercase;
+		}
+
+		.badge.idle {
+			background: rgba(255, 255, 255, 0.06);
+		}
+
+		.badge.loading {
+			background: rgba(255, 199, 102, 0.15);
+			color: #ffd479;
+		}
+
+		.badge.success {
+			background: rgba(115, 215, 173, 0.18);
+			color: #8ef0c0;
+		}
+
+		.badge.error {
+			background: rgba(255, 118, 118, 0.18);
+			color: #ff9f9f;
+		}
+
+		.refresh {
+			margin-left: 0.5rem;
+		}
+
+		.post {
+			background: rgba(255, 255, 255, 0.03);
+			border: 1px solid rgba(255, 255, 255, 0.06);
+			border-radius: 0.6rem;
+			padding: 0.75rem;
+			margin-top: 0.5rem;
+		}
+
+		.post h4 {
+			margin: 0 0 0.3rem 0;
+			font-size: 1rem;
+		}
+
+		.muted {
+			color: #c8cbda;
+			font-size: 0.9rem;
+		}
+
+		.error-text {
+			color: #ff9f9f;
 			font-size: 0.9rem;
 		}
 
