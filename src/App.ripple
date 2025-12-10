@@ -1,7 +1,13 @@
-import { track } from 'ripple';
+import { effect, track } from 'ripple';
 
 export component App() {
 	let count = track(0);
+
+	effect(() => {
+		document.title = `Ripple Count: ${@count}`;
+	});
+
+	const doubled = () => @count * 2;
 
 	<div class="app">
 		<div class="card">
@@ -14,6 +20,12 @@ export component App() {
 				<span class="count">{@count}</span>
 				<button onClick={() => @count++}>{'+'}</button>
 			</div>
+
+			<p class="info-row">{'Effect: document.title updates to reflect @count.'}</p>
+			<p class="info-row">
+				{'Derived (memo-ish): doubled = '}
+				<strong>{doubled()}</strong>
+			</p>
 
 			<div class="links">
 				<a href="https://www.ripplejs.com/" target="_blank" class="link-btn docs">
@@ -136,6 +148,12 @@ export component App() {
 			margin-top: 1.5rem;
 			font-size: 0.9rem;
 			color: #c8cbda;
+		}
+
+		.info-row {
+			margin: 0.35rem 0;
+			color: #c8cbda;
+			font-size: 0.9rem;
 		}
 
 		.edit-hint {
