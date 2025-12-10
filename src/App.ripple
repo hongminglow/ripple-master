@@ -1,13 +1,11 @@
 import { track } from 'ripple';
 
-const logo = new URL('./assets/ripple-logo-horizontal.png', /* Unknown: MetaProperty */.url).href;
-
 export component App() {
 	let count = track(0);
 
 	<div class="app">
 		<div class="card">
-			<img src={logo} alt="Ripple Logo" class="logo" />
+			<img src="src/assets/ripple-logo-horizontal.png" alt="Ripple Logo" class="logo" />
 
 			<p class="subtitle">{'The elegant TypeScript UI framework.'}</p>
 
