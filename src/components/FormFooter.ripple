@@ -1,0 +1,6 @@
+export component FormFooter({ Title, Description }) {
+	<div class="mt-4">
+		<Title />
+		<Description />
+	</div>
+}

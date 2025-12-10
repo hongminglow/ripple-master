@@ -1,4 +1,10 @@
 import { effect, track } from 'ripple';
+import { SocialLink } from './components/SocialLink.ripple';
+import { FormFooter } from './components/FormFooter.ripple';
+
+component FormHeader() {
+	<h1>{'Card Title'}</h1>
+}
 
 export component App() {
 	let count = track(0);
@@ -27,25 +33,17 @@ export component App() {
 				<strong>{doubled()}</strong>
 			</p>
 
-			<div class="links">
-				<a href="https://www.ripplejs.com/" target="_blank" class="link-btn docs">
-					{'Docs'}
-				</a>
-				<a
-					href="https://github.com/Ripple-TS/ripple"
-					target="_blank"
-					class="link-btn github"
-				>
-					{'GitHub'}
-				</a>
-			</div>
+			<SocialLink />
 
-			<p class="info">{'This is a basic Ripple application template.'}</p>
-			<p class="edit-hint">
-				{'Edit '}
-				<code>{'src/App.ripple'}</code>
-				{' to get started.'}
-			</p>
+			<FormFooter Title={FormHeader}>
+				component Description() {
+					<p class="edit-hint">
+						{'Edit '}
+						<code>{'src/App.ripple'}</code>
+						{' to get started.'}
+					</p>
+				}
+			</FormFooter>
 		</div>
 	</div>
 
@@ -119,29 +117,6 @@ export component App() {
 			min-width: 2rem;
 			display: inline-block;
 			text-align: center;
-		}
-
-		.links {
-			display: flex;
-			justify-content: center;
-			gap: 0.75rem;
-			margin-top: 1.5rem;
-		}
-
-		.link-btn {
-			text-decoration: none;
-			padding: 0.45rem 1.2rem;
-			border-radius: 0.75rem;
-			font-weight: 500;
-			font-size: 0.95rem;
-			background-color: rgba(42, 43, 56, 0.9);
-			color: #f2f4f8;
-			border: 1px solid rgba(255, 255, 255, 0.1);
-			transition: background 0.15s ease;
-		}
-
-		.link-btn {
-			background-color: rgba(58, 58, 72, 0.9);
 		}
 
 		.info {
